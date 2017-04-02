@@ -9,9 +9,11 @@ DEB_VERSION := $(VERSION).g$(shell echo $(REVISION)|cut -c1-7)
 $(info Added git hash to Debian package version: $(VERSION) => $(DEB_VERSION))
 endif
 
+DISTRIBUTION:=$(shell echo $(DIST))
+
 DPKG_ARCH:=$(shell dpkg --print-architecture)
-DPKG_CHANGES:=$(PRODUCT)_$(DEB_VERSION)-$(RELEASE)_$(DPKG_ARCH).changes
-DPKG_BUILD:=$(PRODUCT)_$(DEB_VERSION)-$(RELEASE)_$(DPKG_ARCH).build
+DPKG_CHANGES:=$(PRODUCT)_$(DEB_VERSION)-$(RELEASE)_source.changes
+DPKG_BUILD:=$(PRODUCT)_$(DEB_VERSION)-$(RELEASE)_source.build
 DPKG_DSC:=$(PRODUCT)_$(DEB_VERSION)-$(RELEASE).dsc
 DPKG_ORIG_TARBALL:=$(PRODUCT)_$(DEB_VERSION).orig.tar.$(TARBALL_COMPRESSOR)
 DPKG_DEBIAN_TARBALL:=$(PRODUCT)_$(DEB_VERSION)-$(RELEASE).debian.tar.$(TARBALL_COMPRESSOR)
@@ -52,7 +54,7 @@ endif
 	# Bump version in debian/changelog
 	cd $(BUILDDIR)/$(PRODUCT)-$(VERSION) && \
 		NAME="$(CHANGELOG_NAME)" DEBEMAIL=$(CHANGELOG_EMAIL) \
-		dch -b -v "$(DEB_VERSION)-$(RELEASE)" "$(CHANGELOG_TEXT)"
+		dch -D $(DISTRIBUTION) -b -v "$(DEB_VERSION)-$(RELEASE)" "$(CHANGELOG_TEXT)"
 
 $(BUILDDIR)/$(DPKG_ORIG_TARBALL): $(BUILDDIR)/$(TARBALL)
 	# Create a symlink for orig.tar.gz
@@ -82,7 +84,7 @@ $(BUILDDIR)/$(DPKG_CHANGES): $(BUILDDIR)/$(PRODUCT)-$(VERSION)/debian \
 	@echo "-------------------------------------------------------------------"
 	cd $(BUILDDIR)/$(PRODUCT)-$(VERSION) && \
 		debuild --preserve-envvar CCACHE_DIR --prepend-path=/usr/lib/ccache \
-		-Z$(TARBALL_COMPRESSOR) -uc -us $(SMPFLAGS)
+		-Z$(TARBALL_COMPRESSOR) -S -uc -us $(SMPFLAGS)
 	rm -rf $(BUILDDIR)/$(PRODUCT)-$(VERSION)/
 	@echo "------------------------------------------------------------------"
 	@echo "Debian packages are ready"
@@ -92,7 +94,7 @@ $(BUILDDIR)/$(DPKG_CHANGES): $(BUILDDIR)/$(PRODUCT)-$(VERSION)/debian \
 		  $(BUILDDIR)/$(DPKG_DEBIAN_TARBALL) \
 		  $(BUILDDIR)/$(DPKG_ORIG_TARBALL) \
 		  $(BUILDDIR)/$(DPKG_DSC) \
-		  $(BUILDDIR)/*.deb
+		  #$(BUILDDIR)/*.deb
 	@echo "--"
 	@echo
 

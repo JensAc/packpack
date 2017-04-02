@@ -23,7 +23,7 @@ $(BUILDDIR)/ls-lR.txt:
 	@echo "Generating the list of source files"
 	@echo "-------------------------------------------------------------------"
 	@mkdir -p $(BUILDDIR)
-	git ls-files > $@
+	git ls-files | sed  '/^libde265\/[lRL]/d' >>$@
 	git submodule --quiet foreach 'git ls-files | sed "s|^|$$path/|"' >> $@
 
 #
@@ -34,7 +34,7 @@ $(BUILDDIR)/$(TARBALL): $(BUILDDIR)/ls-lR.txt $(BUILDDIR)/VERSION
 	@echo "Creating source tarball"
 	@echo "-------------------------------------------------------------------"
 	tar \
-		--exclude=.git --exclude='.gitignore' --exclude='.gitmodules' \
+		--exclude='.gitignore' --exclude='.gitmodules' \
 		$(TARBALL_EXTRA_ARGS) \
 		--exclude=FreeBSD --exclude=debian --exclude=rpm --exclude=rump \
 		--transform="s,$(BUILDDIR)/VERSION,VERSION,S" \
