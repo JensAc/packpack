@@ -130,6 +130,7 @@ chcon -Rt svirt_sandbox_file_t ${PACKDIR} ${SOURCEDIR} ${BUILDDIR} \
 set -ex
 docker pull ${DOCKER_REPO}:${DOCKER_IMAGE}
 docker run \
+        -e "DIST=${DIST}" \
         --volume "${PACKDIR}:/pack:ro" \
         --volume "${SOURCEDIR}:/source:ro" \
         --volume "${BUILDDIR}:/build" \
