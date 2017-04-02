@@ -36,7 +36,7 @@ endif
 # Sic: please follow Semantic Versioning (http://semver.org),
 # Debian policies and Fedora guidelines then planning your releases.
 #
-VERSION ?= $(shell git describe --long --always | sed -n 's/^\([0-9\.]*\)-\([0-9]*\)-\([a-z0-9]*\)/\1.\2/p')
+VERSION ?= $(shell git describe --tags)
 ifeq ($(VERSION),) # Fallback
 VERSION := 0.0.1
 endif
@@ -54,8 +54,8 @@ RELEASE ?= 1
 REVISION ?= $(shell git rev-parse HEAD)
 
 # Name, email and text for changelog entry
-CHANGELOG_NAME ?= PackPack
-CHANGELOG_EMAIL ?= build@tarantool.org
+CHANGELOG_NAME ?= Jens Schneider
+CHANGELOG_EMAIL ?= schneider@ient.rwth-aachen.de
 CHANGELOG_TEXT ?= Automated build
 
 # Extra arguments for tar
